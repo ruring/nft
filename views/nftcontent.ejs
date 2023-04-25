@@ -1,0 +1,27 @@
+<html>
+<head>
+<style>
+th,td { padding : 5px }
+</style>
+</head>
+<body>
+    <h1><%=name%></h1>
+    <table border=1 style="border-collapse:collapse">
+    <tr><th>id</th><th>Title</th><th>Site</th><th>image</th><th>Content</th><th>like</th></tr>
+        <tr><td><%=board.id%></td></td><td><%=board.title%></td>
+        <td><a href="<%=board.url%>"><%=board.imageUrl.split('/')[2]%></a></td>
+        <td><img width=100 src="<%=board.imageUrl%>"></td>
+        <td><%=board.content%></td>
+        <td><%=board.likeCount%></td></tr>
+        <tr><td colspan=6>댓글</td></tr>
+    <% board.comments.forEach(function(comment,id){ %>
+        <tr><td><%=id%></td><td colspan=4><%=comment%></td>
+            <td><a href="/delcomm?bid=<%=board.id%>&cid=<%=comment%>">삭제</a></td></tr>
+    <% }) %>
+    </table>
+    <a href="/like?bid=<%=board.id%>">좋아요~</a> |
+    <a href="/edit?bid=<%=board.id%>">수정</a> |
+    <a href="/lists">목록 전체보기</a>
+    <form method=post action="/comment?bid=<%=board.id%>&cid=<%=board.comments.length%>"><input type=text name=comment size=50><input type=submit value="댓글쓰기"></form>
+</body>
+</html>
