@@ -1,0 +1,23 @@
+<html>
+<head>
+<style>
+tr,th,td { padding : 5px }
+</style>
+</head>
+<body>
+    <h1><%=name%></h1>
+    <table border=1  style="border-collapse:collapse">
+    <tr><th>id</th><th>Title</th>
+        <th>Image</th><th>Site</th>
+        <th>Content</th><th>likeCount</th></tr>
+    <% boards.forEach(function(list){ %>
+        <tr><td><%=list.id%></td><td><a href="/content?bid=<%=list.id%>"><%=list.title%></a></td>
+            </td><td><img width=100 src="<%=list.imageUrl%>"></td>
+            </td><td><a href="<%=list.url%>"><%=list.imageUrl.split('/')[2]%></a></td>
+            <td><%=list.content%></td>
+            <td><%=list.likeCount%></td></tr>
+    <% }) %>
+    </table>
+    <a href="nft.html">NFT 추가</a>
+</body>
+</html>
