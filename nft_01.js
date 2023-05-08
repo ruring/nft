@@ -48,80 +48,46 @@ app.get('/data', (req, res) => {
     res.json(board)
   })
 })
+app.get('/lists_ruring', (req, res) => {
+  nfts.find().then((boards) => {
+    res.render("nftlists_ruring", {"name":"NFT Lists", "boards":boards})
+  })
+})
 app.get('/lists', (req, res) => {
   nfts.find().then((boards) => {
     res.render("nftlists", {"name":"NFT Lists", "boards":boards})
   })
 })
-app.get('/edit', (req, res) => {
+app.get('/edit_ruring', (req, res) => {
   if ( req.query.bid ) {
           bid = parseInt(req.query.bid)
      nfts.findOne({id:bid}).then((board) => {
-       res.render("nftedit", {"name":"NFT Content", "board":board})
+       res.render("nftedit_ruring", {"name":"NFT Content", "board":board})
      })
   }
 })
-<<<<<<< HEAD
-//app.post('/edit', (req, res) => {
-//        console.log("edit post" + req.body.title + req.body.content)
-//  if ( req.query.bid ) {
-//          bid = parseInt(req.query.bid)
-//          console.log("bid" + bid)
-//          nfts.findOneAndUpdate({id:bid},{$set:{title:req.body.title,url:req.body.url,imageUrl:req.body.imageUrl,content:req.body.content}},null).then((board) => {
-          //res.render("content", {"name":"Board Content", "board":board})
-//          res.redirect("/content?bid="+bid)
-//     })
-//  }
-//})
 app.get('/edit', (req, res) => {
-  if (req.query.bid) {
-    const bid = parseInt(req.query.bid);
-    nfts.findOne({ id: bid }).then((board) => {
-      res.render("nftedit", { "name": "NFT Content", "board": board });
-    });
+	  const password = req.body.password;
+
+  // 비밀번호 검증 로직
+  if (password === 'mypassword') {
+    // 페이지 수정 로직
+  	if ( req.query.bid ) {
+      		bid = parseInt(req.query.bid)
+     		nfts.findOne({id:bid}).then((board) => {
+       			res.render("nftedit", {"name":"NFT Content", "board":board})
+     		})
+ 	}
+	res.send('페이지가 수정되었습니다.');
+  } else {
+    res.send('잘못된 비밀번호입니다.');
   }
-});
-
+})
 app.post('/edit', (req, res) => {
-  if (req.query.bid) {
-    const bid = parseInt(req.query.bid);
-    const title = req.body.title;
-    const url = req.body.url;
-    const imageUrl = req.body.imageUrl;
-    const content = req.body.content;
-    const password = req.body.password;
+  const password = req.body.password;
 
-    nfts.findOne({ id: bid }).then((board) => {
-      // 비밀번호 검증
-      bcrypt.compare(password, board.password, function (err, result) {
-        if (err) {
-          console.log(err);
-          res.status(500).send('Error comparing password.');
-          return;
-        }
-
-        if (result) {
-          // 비밀번호가 일치하는 경우, 게시글 수정
-          nfts.findOneAndUpdate({ id: bid }, { $set: { title: title, url: url, imageUrl: imageUrl, content: content } }, null)
-            .then((board) => {
-              res.redirect("/content?bid=" + bid);
-            })
-            .catch((err) => {
-              console.log(err);
-              res.status(500).send('Error updating board.');
-              return;
-            });
-        } else {
-          // 비밀번호가 일치하지 않는 경우, 권한 없음
-          res.status(403).send('Permission denied.');
-        }
-      });
-    });
-  }
-});
-
-=======
-app.post('/edit', (req, res) => {
+  // 비밀번호 검증 로직
+  if (password === 'mypassword') {
         console.log("edit post" + req.body.title + req.body.content)
   if ( req.query.bid ) {
           bid = parseInt(req.query.bid)
@@ -130,9 +96,11 @@ app.post('/edit', (req, res) => {
           //res.render("content", {"name":"Board Content", "board":board})
           res.redirect("/content?bid="+bid)
      })
+  } res.send('페이지가 수정되었습니다.');
+  } else {
+    res.send('잘못된 비밀번호입니다.');
   }
 })
->>>>>>> origin/main
 app.post('/comment', (req, res) => {
         console.log("comment post" + req.query.bid + req.body.comment)
   if ( req.query.bid ) {
@@ -168,58 +136,42 @@ app.get('/like', (req, res) => {
   }
 })
 app.get('/content', (req, res) => {
-        console.log(req.query)
+        console.log("req : "+req.query)
   if ( req.query.bid ) {
+	    const password = req.body.password;
+
+             console.log("passwd " + password);
+  // 비밀번호 검증 로직
+  if (password === 'mypassword') {
+    // 페이지 수정 로직
           bid = parseInt(req.query.bid)
         console.log(bid)
      nfts.findOne({id:bid}).then((board) => {
              console.log("content read good");
        res.render("nftcontent", {"name":"NFT Content", "board":board})
      })
+
+  }res.send('페이지가 수정되었습니다.');
+  } else {
+    res.send('잘못된 비밀번호입니다.');
   }
 })
-<<<<<<< HEAD
-//app.post('/board', (req, res) => {
-//   const title = req.body.title
-//   const content = req.body.content
-//   const url = req.body.url
-//   const imageUrl = req.body.imageUrl
-//   const boards = new nfts({
-//         id : ++bid,
-//         title: title,
-//         url: url,
-//         imageUrl: imageUrl,
- //        content: content,
-//   })
-//   boards.save()
-//                .then(()=>res.redirect("/lists"))
-//                .catch((err)=>res.json(req.body))
-//})
-	//
-
-
 app.post('/board', (req, res) => {
-  const title = req.body.title;
-  const content = req.body.content;
-  const url = req.body.url;
-  const imageUrl = req.body.imageUrl;
-
-  const board = new nfts({
-    id: ++bid,
-    title: title,
-    url: url,
-    imageUrl: imageUrl,
-    content: content,
-	  password: password, // 비밀번호를 MongoDB에 저장<F4>
-  });
-
-  board
-    .save()
-    .then(() => res.redirect("/lists"))
-    .catch((err) => res.status(500).json(err));
-});
-
-=======
+   const title = req.body.title
+   const content = req.body.content
+   const url = req.body.url
+   const imageUrl = req.body.imageUrl
+   const boards = new nfts({
+         id : ++bid,
+         title: title,
+         url: url,
+         imageUrl: imageUrl,
+         content: content,
+   })
+   boards.save()
+                .then(()=>res.redirect("/lists_ruring"))
+                .catch((err)=>res.json(req.body))
+})
 app.post('/board', (req, res) => {
    const title = req.body.title
    const content = req.body.content
@@ -236,5 +188,4 @@ app.post('/board', (req, res) => {
                 .then(()=>res.redirect("/lists"))
                 .catch((err)=>res.json(req.body))
 })
->>>>>>> origin/main
-var server = app.listen(8080, function() {});
+var server = app.listen(80, function() {});
