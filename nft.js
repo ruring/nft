@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const url = 'mongodb://localhost/BoardsDB';
 let bid = 0;
 
@@ -28,9 +29,9 @@ const boardSchema = new mongoose.Schema({
   versionKey: false
 });
 
-const nfts = mongoose.model('nfts', boardSchema);
+let Nft = mongoose.model('nfts', boardSchema);
 
-nfts.findOne({}, {}, { sort: { '_id': -1 } })
+Nft.findOne({}, {}, { sort: { '_id': -1 } })
   .then((post) => {
     console.log(post.id);
     bid = post.id;
@@ -51,13 +52,13 @@ app.get('/', (req, res) => {
 });
 
 app.get('/data', (req, res) => {
-  nfts.find().then((board) => {
+  Nft.find().then((board) => {
     res.json(board);
   });
 });
 
 app.get('/lists', (req, res) => {
-  nfts.find().then((boards) => {
+  Nft.find().then((boards) => {
     res.render("nftlists", { "name": "NFT Lists", "boards": boards });
   });
 });
@@ -65,7 +66,7 @@ app.get('/lists', (req, res) => {
 app.get('/edit', (req, res) => {
   if (req.query.bid) {
     const bid = parseInt(req.query.bid);
-    nfts.findOne({ id: bid }).then((board) => {
+    Nft.findOne({ id: bid }).then((board) => {
       res.render("nftedit", { "name": "NFT Content", "board": board });
     });
   }
@@ -80,7 +81,7 @@ app.post('/edit', (req, res) => {
     const content = req.body.content;
     const password = req.body.password;
 
-    nfts.findOne({ id: bid }).then((board) => {
+    Nft.findOne({ id: bid }).then((board) => {
       // 비밀번호 검증
       bcrypt.compare(password, board.password, function (err, result) {
         if (err) {
@@ -91,7 +92,7 @@ app.post('/edit', (req, res) => {
 
         if (result) {
           // 비밀번호가 일치하는 경우, 게시글 수정
-          nfts.findOneAndUpdate(
+          Nft.findOneAndUpdate(
             { id: bid },
             { $set: { title: title, url: url, imageUrl: imageUrl, content: content } },
             null
@@ -112,32 +113,12 @@ app.post('/edit', (req, res) => {
   }
 });
 
-app.post('/edit', (req, res) => {
-  console.log("edit post" + req.body.title + req.body.content);
-  if (req.query.bid) {
-    bid = parseInt(req.query.bid);
-    console.log("bid" + bid);
-    nfts.findOneAndUpdate(
-      { id: bid },
-      { $set: { title: req.body.title, url: req.body.url, imageUrl: req.body.imageUrl, content: req.body.content } },
-      null
-    )
-      .then(() => {
-        res.redirect("/content?bid=" + bid);
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).send('Error updating board.');
-      });
-  }
-});
-
 app.post('/comment', (req, res) => {
   console.log("comment post" + req.query.bid + req.body.comment);
   if (req.query.bid) {
     bid = parseInt(req.query.bid);
     console.log("bid" + bid + " cid=" + req.query.cid);
-    nfts.findOneAndUpdate(
+    Nft.findOneAndUpdate(
       { id: bid },
       { $push: { comments: req.body.comment } },
       { new: true }
@@ -157,7 +138,7 @@ app.get('/delcomm', (req, res) => {
   if (req.query.bid) {
     bid = parseInt(req.query.bid);
     console.log("bid" + bid + " cid=" + req.query.cid);
-    nfts.findOneAndUpdate(
+    Nft.findOneAndUpdate(
       { id: bid },
       { $pull: { comments: req.query.cid } },
       { new: true }
@@ -177,7 +158,7 @@ app.get('/like', (req, res) => {
   if (req.query.bid) {
     bid = parseInt(req.query.bid);
     console.log("bid" + bid);
-    nfts.findOneAndUpdate(
+    Nft.findOneAndUpdate(
       { id: bid },
       { $inc: { likeCount: 1 } },
       { new: true }
@@ -198,7 +179,7 @@ app.get('/content', (req, res) => {
   if (req.query.bid) {
     bid = parseInt(req.query.bid);
     console.log(bid);
-    nfts.findOne({ id: bid }).then((board) => {
+    Nft.findOne({ id: bid }).then((board) => {
       console.log("Content read success");
       res.render("nftcontent", { "name": "NFT Content", "board": board });
     });
@@ -209,29 +190,29 @@ app.post('/board', (req, res) => {
   const title = req.body.title;
   const content = req.body.content;
   const url = req.body.url;
-  const imageUrl = req.body
+  const imageUrl = req.body.imageUrl;
+  const password = req.body.password;
 
-imageUrl = req.body.imageUrl;
-const password = req.body.password;
+  const board = new Nft({
+    id: ++bid,
+    title: title,
+    url: url,
+    imageUrl: imageUrl,
+    content: content,
+    password: password, // 비밀번호를 MongoDB에 저장
+  });
 
-const board = new nfts({
-id: ++bid,
-title: title,
-url: url,
-imageUrl: imageUrl,
-content: content,
-password: password, // 비밀번호를 MongoDB에 저장
-});
-
-board
-.save()
-.then(() => res.redirect("/lists"))
-.catch((err) => {
-console.log(err);
-res.status(500).send('Error saving board.');
-});
+  board
+    .save()
+    .then(() => res.redirect("/lists"))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send('Error saving board.');
+    });
 });
 
 app.listen(8080, () => {
-console.log('Server is running on port 8080');
+  console.log('Server is running on port 8080');
 });
+
+
