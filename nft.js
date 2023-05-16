@@ -9,13 +9,13 @@ mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Successfully connected to MongoDB'))
   .catch(e => console.error(e));
 
-const connection = mongoose.connection;
+let connection = mongoose.connection;
 connection.on('error', console.error);
 connection.once('open', () => {
   console.log('Connected to MongoDB server');
 });
 
-const boardSchema = new mongoose.Schema({
+let boardSchema = new mongoose.Schema({
   id: { type: Number, default: 0 },
   title: { type: String },
   url: { type: String },
@@ -65,7 +65,7 @@ app.get('/lists', (req, res) => {
 
 app.get('/edit', (req, res) => {
   if (req.query.bid) {
-    const bid = parseInt(req.query.bid);
+    let bid = parseInt(req.query.bid);
     Nft.findOne({ id: bid }).then((board) => {
       res.render("nftedit", { "name": "NFT Content", "board": board });
     });
@@ -74,12 +74,12 @@ app.get('/edit', (req, res) => {
 
 app.post('/edit', (req, res) => {
   if (req.query.bid) {
-    const bid = parseInt(req.query.bid);
-    const title = req.body.title;
-    const url = req.body.url;
-    const imageUrl = req.body.imageUrl;
-    const content = req.body.content;
-    const password = req.body.password;
+    let bid = parseInt(req.query.bid);
+    let title = req.body.title;
+    let url = req.body.url;
+    let imageUrl = req.body.imageUrl;
+    let content = req.body.content;
+    let password = req.body.password;
 
     Nft.findOne({ id: bid }).then((board) => {
       // 비밀번호 검증
@@ -187,13 +187,13 @@ app.get('/content', (req, res) => {
 });
 
 app.post('/board', (req, res) => {
-  const title = req.body.title;
-  const content = req.body.content;
-  const url = req.body.url;
-  const imageUrl = req.body.imageUrl;
-  const password = req.body.password;
+  let title = req.body.title;
+  let content = req.body.content;
+  let url = req.body.url;
+  let imageUrl = req.body.imageUrl;
+  let password = req.body.password;
 
-  const board = new Nft({
+  let board = new Nft({
     id: ++bid,
     title: title,
     url: url,
