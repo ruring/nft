@@ -68,14 +68,51 @@ app.get('/lists', (req, res) => {
 //	res.render("nftlists", {"name":"NFT Lists", "boards":boards})
   })
 })
+//app.get('/edit', (req, res) => {
+//  console.log('get/edit');
+//  if ( req.query.bid ) {
+//          bid = parseInt(req.query.bid)
+//     nfts.findOne({id:bid}).then((board) => {
+//       res.render("nftedit", {"name":"NFT Content", "board":board})
+//     })
+//  }
+//})
+
+
+
+
 app.get('/edit', (req, res) => {
-  if ( req.query.bid ) {
-          bid = parseInt(req.query.bid)
-     nfts.findOne({id:bid}).then((board) => {
-       res.render("nftedit", {"name":"NFT Content", "board":board})
-     })
+  if (req.query.bid) {
+    const bid = parseInt(req.query.bid);
+    const password = req.query.password; // 비밀번호 입력값 가져오기
+
+    nfts.findOne({ id: bid }).then((board) => {
+      if (board) {
+        console.log('입력 비밀번호:', password); // 입력받은 비밀번호 로그로 출력
+        console.log('DB 비밀번호:', board.password); // DB에 저장된 비밀번호 로그로 출력
+
+        // 비밀번호 비교
+        if (password === board.password) {
+          // 비밀번호 일치 시, 수정 페이지 렌더링
+          res.render("nftedit", { "name": "NFT Content", "board": board });
+        } else {
+          // 비밀번호 불일치 시, 오류 처리
+          res.send('<script>alert("비밀번호가 일치하지 않습니다."); window.history.back();</script>');
+        }
+      } else {
+        // 해당 게시물이 없을 경우 오류 처리
+        res.send('<script>alert("게시물을 찾을 수 없습니다."); window.history.back();</script>');
+      }
+    });
+  } else {
+    // bid 쿼리 파라미터가 없을 경우 오류 처리
+    res.send('<script>alert("올바른 요청이 아닙니다."); window.history.back();</script>');
   }
-})
+});
+
+
+
+
 
 // 비밀번호 저장 라우트 핸들러
 app.post('/password', function(req, res) {
@@ -97,17 +134,55 @@ app.post('/password', function(req, res) {
     });
 });
 
+//app.post('/edit', (req, res) => {
+//        console.log("edit post" + req.body.title + req.body.content)
+//  if ( req.query.bid ) {
+//          bid = parseInt(req.query.bid)
+//          console.log("bid" + bid)
+//          nfts.findOneAndUpdate({id:bid},{$set:{title:req.body.title,url:req.body.url,imageUrl:req.body.imageUrl,content:req.body.content}},null).then((board) => {
+//          //res.render("content", {"name":"Board Content", "board":board})
+//          res.redirect("/content?bid="+bid)
+//     })
+//  }
+//})
+
 app.post('/edit', (req, res) => {
-        console.log("edit post" + req.body.title + req.body.content)
-  if ( req.query.bid ) {
-          bid = parseInt(req.query.bid)
-          console.log("bid" + bid)
-          nfts.findOneAndUpdate({id:bid},{$set:{title:req.body.title,url:req.body.url,imageUrl:req.body.imageUrl,content:req.body.content}},null).then((board) => {
-          //res.render("content", {"name":"Board Content", "board":board})
-          res.redirect("/content?bid="+bid)
-     })
+  console.log("edit post" + req.body.title + req.body.content)
+  if (req.query.bid) {
+    const bid = parseInt(req.query.bid);
+    const password = req.body.password;
+
+    // 비밀번호 검증 로직
+    nfts.findOne({ id: bid }).then((board) => {
+      if (board && board.password === password) {
+        // 비밀번호 일치 시 업데이트 로직 실행
+        nfts.findOneAndUpdate(
+          { id: bid },
+          {
+            $set: {
+              title: req.body.title,
+              url: req.body.url,
+              imageUrl: req.body.imageUrl,
+              content: req.body.content,
+            },
+          },
+          null
+        ).then(() => {
+          res.redirect("/content?bid=" + bid);
+        });
+      } else {
+        // 비밀번호 불일치 시 오류 처리
+        res.send('<script>alert("비밀번호가 일치하지 않습니다."); window.history.back();</script>');
+      }
+    });
   }
-})
+});
+
+
+
+
+
+
 app.post('/comment', (req, res) => {
         console.log("comment post" + req.query.bid + req.body.comment)
   if ( req.query.bid ) {
