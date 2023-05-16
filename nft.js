@@ -76,6 +76,7 @@ app.post('/password', function(req, res) {
   newPassword.save()
     .then(() => {
       // 비밀번호 저장 성공
+    console.log("wow"); // "wow" 로그 출력
       res.redirect('/');
     })
     .catch((err) => {
