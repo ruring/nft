@@ -24,7 +24,7 @@ const board_schema = new mongoose.Schema({
 },{
      versionKey: false
 })
-var bid = 0
+let bid = 0;
 const nfts = mongoose.model('nfts', board_schema);
 nfts.findOne({},{},{sort:{'_id':-1}})
   .then(function(post){
