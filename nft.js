@@ -71,17 +71,18 @@ app.get('/edit', (req, res) => {
 // 비밀번호 저장 라우트 핸들러
 app.post('/password', function(req, res) {
   const { password } = req.body;
+  console.log('사용자가 입력한 비밀번호:', password);
   const newPassword = new Password({ password });
 
   newPassword.save()
     .then(() => {
       // 비밀번호 저장 성공
-    console.log("wow"); // "wow" 로그 출력
+      console.log('비밀번호 저장에 성공했습니다.');
       res.redirect('/');
     })
     .catch((err) => {
       // 비밀번호 저장 실패
-      console.error(err);
+      console.error('비밀번호 저장에 실패했습니다.', err);
       res.redirect('/');
     });
 });
