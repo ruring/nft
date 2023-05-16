@@ -70,6 +70,7 @@ app.get('/edit', (req, res) => {
 
 // 비밀번호 저장 라우트 핸들러
 app.post('/password', function(req, res) {
+  console.log('비밀번호');
   const { password } = req.body;
   console.log('사용자가 입력한 비밀번호:', password);
   const newPassword = new Password({ password });
@@ -144,6 +145,7 @@ app.get('/content', (req, res) => {
   }
 })
 app.post('/board', (req, res) => {
+   console.log("board");
    const title = req.body.title
    const content = req.body.content
    const url = req.body.url
@@ -159,4 +161,5 @@ app.post('/board', (req, res) => {
                 .then(()=>res.redirect("/lists"))
                 .catch((err)=>res.json(req.body))
 })
+console.log("TEST");
 var server = app.listen(8080, function() {});
