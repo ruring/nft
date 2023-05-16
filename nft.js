@@ -3,10 +3,17 @@ var app = express();
 var mongoose = require('mongoose');
 var url = 'mongodb://localhost/BoardsDB';
 var str = "";
+
 mongoose
   .connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Successfully connected to mongodb'))
   .catch(e => console.error(e));
+
+const passwordSchema = new mongoose.Schema({
+  password: { type: String }
+});
+
+const Password = mongoose.model('Password', passwordSchema);
 const connection = mongoose.connection
 connection.on('error', console.error)
 connection.once('open', () => {
@@ -60,6 +67,24 @@ app.get('/edit', (req, res) => {
      })
   }
 })
+
+// 비밀번호 저장 라우트 핸들러
+app.post('/password', function(req, res) {
+  const { password } = req.body;
+  const newPassword = new Password({ password });
+
+  newPassword.save()
+    .then(() => {
+      // 비밀번호 저장 성공
+      res.redirect('/');
+    })
+    .catch((err) => {
+      // 비밀번호 저장 실패
+      console.error(err);
+      res.redirect('/');
+    });
+});
+
 app.post('/edit', (req, res) => {
         console.log("edit post" + req.body.title + req.body.content)
   if ( req.query.bid ) {
