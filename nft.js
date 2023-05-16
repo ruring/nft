@@ -21,7 +21,8 @@ const board_schema = new mongoose.Schema({
      content: { type: String },
      likeCount: { type: Number, default: 0 },
      createdAt: { type: Date, default: Date.now },
-     comments: { type : Array , "default" : [] }
+     comments: { type : Array , "default" : [] },
+     password: { type: String } // 비밀번호 필드 추가
 },{
      versionKey: false
 })
@@ -61,7 +62,6 @@ app.get('/edit', (req, res) => {
      })
   }
 })
-<<<<<<< HEAD
 //app.post('/edit', (req, res) => {
 //        console.log("edit post" + req.body.title + req.body.content)
 //  if ( req.query.bid ) {
@@ -120,7 +120,6 @@ app.post('/edit', (req, res) => {
   }
 });
 
-=======
 app.post('/edit', (req, res) => {
         console.log("edit post" + req.body.title + req.body.content)
   if ( req.query.bid ) {
@@ -132,7 +131,6 @@ app.post('/edit', (req, res) => {
      })
   }
 })
->>>>>>> origin/main
 app.post('/comment', (req, res) => {
         console.log("comment post" + req.query.bid + req.body.comment)
   if ( req.query.bid ) {
@@ -178,7 +176,6 @@ app.get('/content', (req, res) => {
      })
   }
 })
-<<<<<<< HEAD
 //app.post('/board', (req, res) => {
 //   const title = req.body.title
 //   const content = req.body.content
@@ -210,7 +207,7 @@ app.post('/board', (req, res) => {
     url: url,
     imageUrl: imageUrl,
     content: content,
-	  password: password, // 비밀번호를 MongoDB에 저장<F4>
+    password: password, // 비밀번호를 MongoDB에 저장<F4>
   });
 
   board
@@ -219,7 +216,6 @@ app.post('/board', (req, res) => {
     .catch((err) => res.status(500).json(err));
 });
 
-=======
 app.post('/board', (req, res) => {
    const title = req.body.title
    const content = req.body.content
