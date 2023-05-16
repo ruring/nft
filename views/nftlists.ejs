@@ -13,7 +13,17 @@ tr,th,td { padding : 5px }
     <% boards.forEach(function(list){ %>
         <tr><td><%=list.id%></td><td><a href="/content?bid=<%=list.id%>"><%=list.title%></a></td>
             </td><td><img width=100 src="<%=list.imageUrl%>"></td>
-            </td><td><a href="<%=list.url%>"><%=list.imageUrl.split('/')[2]%></a></td>
+
+<% if (list.imageUrl) { %>
+  <td><a href="<%= list.url %>"><%= list.imageUrl.split('/')[2] %></a></td>
+<% } else { %>
+  <td></td> <!-- 또는 다른 적절한 처리를 수행하세요 -->
+<% } %>
+
+
+
+
+
             <td><%=list.content%></td>
             <td><%=list.likeCount%></td></tr>
     <% }) %>

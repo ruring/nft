@@ -2,6 +2,19 @@
 <head>
 <style>
 th,td { padding : 5px }
+
+  .button {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-right: 10px;
+  }
+
 </style>
 </head>
 <body>
@@ -9,7 +22,7 @@ th,td { padding : 5px }
     <table border=1 style="border-collapse:collapse">
     <tr><th>id</th><th>Title</th><th>Site</th><th>image</th><th>Content</th><th>like</th></tr>
         <tr><td><%=board.id%></td></td><td><%=board.title%></td>
-        <td><a href="<%=board.url%>"><%=board.imageUrl.split('/')[2]%></a></td>
+        <td><a href="<%=board.url%>"><%=board.imageUrl && board.imageUrl.split('/')[2]%></a></td>
         <td><img width=100 src="<%=board.imageUrl%>"></td>
         <td><%=board.content%></td>
         <td><%=board.likeCount%></td></tr>
@@ -19,9 +32,14 @@ th,td { padding : 5px }
             <td><a href="/delcomm?bid=<%=board.id%>&cid=<%=comment%>">삭제</a></td></tr>
     <% }) %>
     </table>
-    <a href="/like?bid=<%=board.id%>">좋아요~</a> |
-    <a href="/edit?bid=<%=board.id%>">수정</a> |
-    <a href="/lists">목록 전체보기</a>
-    <form method=post action="/comment?bid=<%=board.id%>&cid=<%=board.comments.length%>"><input type=text name=comment size=50><input type=submit value="댓글쓰기"></form>
+    <a href="/like?bid=<%=board.id%>"  class="button">좋아요~</a> 
+    <a href="/edit?bid=<%=board.id%>"  class="button">수정</a> 
+
+<a href="/delete?bid=<%=board.id%>" class="button">삭제</a>
+    <a href="/lists"  class="button">목록 전체보기</a>
+    <form method=post action="/comment?bid=<%=board.id%>&cid=<%=board.comments.length%>">
+<input type=text name=comment size=50>
+<input type=submit value=" 댓글쓰기" ></form>
 </body>
 </html>
+

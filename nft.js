@@ -56,7 +56,16 @@ app.get('/data', (req, res) => {
 })
 app.get('/lists', (req, res) => {
   nfts.find().then((boards) => {
-    res.render("nftlists", {"name":"NFT Lists", "boards":boards})
+ const filteredBoards = boards.filter((board) => board.title && board.title.trim() !== "");
+    res.render("nftlists", { name: "NFT Lists", boards: filteredBoards });
+  }).catch((err) => {
+    console.log(err);
+    res.redirect('/');
+
+
+
+
+//	res.render("nftlists", {"name":"NFT Lists", "boards":boards})
   })
 })
 app.get('/edit', (req, res) => {
@@ -150,16 +159,71 @@ app.post('/board', (req, res) => {
    const content = req.body.content
    const url = req.body.url
    const imageUrl = req.body.imageUrl
+   const password = req.body.password;
    const boards = new nfts({
          id : ++bid,
          title: title,
          url: url,
          imageUrl: imageUrl,
          content: content,
-   })
+	 password: password 
+  })
    boards.save()
                 .then(()=>res.redirect("/lists"))
                 .catch((err)=>res.json(req.body))
 })
+
+app.post('/delete', (req, res) => {
+  const { bid, password } = req.body;
+
+      console.log('post/delete.');
+  // 비밀번호 확인 로직
+  nfts.findOne({ id: bid, password: password })
+    .then((board) => {
+      if (!board) {
+        // 비밀번호가 일치하지 않는 경우
+        console.log('비밀번호가 일치하지 않습니다.');
+        res.redirect('/'); // 비밀번호가 일치하지 않을 때의 처리를 구현해야 합니다.
+      } else {
+        // 비밀번호가 일치하는 경우, 해당 데이터 삭제
+        nfts.findOneAndDelete({ id: bid })
+          .then(() => {
+            console.log('데이터를 성공적으로 삭제했습니다.');
+            res.redirect('/lists'); // 삭제 후 리다이렉트할 경로를 설정해야 합니다.
+          })
+          .catch((error) => {
+            console.error('데이터 삭제 중 에러가 발생했습니다.', error);
+            res.redirect('/'); // 삭제 중 에러 발생 시의 처리를 구현해야 합니다.
+          });
+      }
+    })
+    .catch((error) => {
+      console.error('비밀번호 확인 중 에러가 발생했습니다.', error);
+      res.redirect('/'); // 비밀번호 확인 중 에러 발생 시의 처리를 구현해야 합니다.
+    });
+});
+
+app.get('/delete', (req, res) => {
+  const bid = req.query.bid;
+  
+      console.log('get/delete.');
+  // 삭제 로직 구현
+  nfts.findOneAndDelete({ id: bid })
+    .then(() => {
+      console.log('데이터를 성공적으로 삭제했습니다.');
+      res.redirect('/lists'); // 삭제 후 리다이렉트할 경로를 설정해야 합니다.
+    })
+    .catch((error) => {
+      console.error('데이터 삭제 중 에러가 발생했습니다.', error);
+      res.redirect('/'); // 삭제 중 에러 발생 시의 처리를 구현해야 합니다.
+    });
+});
+
+
+
+
+
+
+
 console.log("TEST");
 var server = app.listen(8080, function() {});
