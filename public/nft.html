@@ -1,15 +1,43 @@
-<H2> Add NFT List</H2>
-<form method="post" action="/board">
-  <label>제목</label>
-  <input type="text" name="title" size="100"><br>
-  <label>NFT 주소</label>
-  <input type="text" name="url" size="160"><br>
-  <label>그림주소</label>
-  <input type="text" name="imageUrl" size="100"><br>
-  <label>내용</label><br>
-  <!-- 폼 요소들 -->
-  <textarea name="content" rows="5" cols="100"></textarea><br>
-  <label>비밀번호</label>
-  <input type="password" name="password"><br> <!-- 비밀번호 입력 필드 추가 -->
-  <input type="submit">
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add NFT List</title>
+  <style>
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 5px;
+    }
+    input[type="submit"] {
+      padding: 8px 16px;
+      background-color: #4CAF50;
+      color: white;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Add NFT List</h2>
+  <form method="post" action="/board">
+    <label>제목</label>
+    <input type="text" name="title" size="100">
+    <label>NFT 주소</label>
+    <input type="text" name="url" size="160">
+    <label>그림 주소</label>
+    <input type="text" name="imageUrl" size="100">
+    <label>내용</label>
+    <textarea name="content" rows="5" cols="100"></textarea>
+    <input type="password" name="password" placeholder="비밀번호 입력">
+    <input type="submit" value="등록">
+  </form>
+</body>
+</html>
+
