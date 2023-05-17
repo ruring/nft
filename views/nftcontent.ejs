@@ -34,15 +34,37 @@ th,td { padding : 5px }
     </table>
     <a href="/like?bid=<%=board.id%>"  class="button">좋아요~</a> 
 
-    
-<form method="post" action="/edit">
+<form method="post" action= "/edit?bid=<%= board.id %>">
   <input type="hidden" name="bid" value="<%=board.id%>">
   <input type="password" name="password" placeholder="비밀번호 입력"> 
 <a href="/edit?bid=<%=board.id%>"  class="button">수정</a> 
 <a href="/delete?bid=<%=board.id%>" class="button">삭제</a>
 </form>
+
+
+<form method="post" action="/edit">
+  <input type="hidden" name="bid" value="<%=board.id%>">
+  <input type="password" name="password" placeholder="비밀번호 입력">
+  <button type="submit" class="button">수정</button>
+</form>
     <a href="/lists"  class="button">목록 전체보기</a>
     <form method=post action="/comment?bid=<%=board.id%>&cid=<%=board.comments.length%>">
+
+<form method="post" action="/edit">
+  <input type="hidden" name="bid" value="<%=board.id%>">
+  <input type="password" name="password" placeholder="비밀번호 입력">
+  <button type="submit" class="button">수정</button>
+  <button type="submit" formaction="/delete" class="button">삭제</button>
+</form>
+
+
+<form method="post" action="/edit">
+  <input type="hidden" name="bid" value="<%=board.id%>">
+  <input type="password" name="password" placeholder="비밀번호 입력">
+  <button type="submit" class="button">수정</button>
+  <button type="submit" formaction="/delete" class="button">삭제</button>
+</form>
+
 <input type=text name=comment size=50>
 <input type=submit value=" 댓글쓰기" ></form>
 </body>

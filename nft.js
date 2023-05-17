@@ -27,7 +27,8 @@ const board_schema = new mongoose.Schema({
      content: { type: String },
      likeCount: { type: Number, default: 0 },
      createdAt: { type: Date, default: Date.now },
-     comments: { type : Array , "default" : [] }
+     comments: { type : Array , "default" : [] },
+  password: { type: String }
 },{
      versionKey: false
 })
@@ -50,13 +51,13 @@ app.get('/',function(req, res) {
         res.send("Hi");
 });
 app.get('/data', (req, res) => {
-   console.log("gett_data");
+   console.log("#gett_data");
   nfts.find().then((board) => {
     res.json(board)
   })
 })
 app.get('/lists', (req, res) => {
-   console.log("get_lists");
+   console.log("#get_lists");
   nfts.find().then((boards) => {
  const filteredBoards = boards.filter((board) => board.title && board.title.trim() !== "");
     res.render("nftlists", { name: "NFT Lists", boards: filteredBoards });
@@ -84,14 +85,18 @@ app.get('/lists', (req, res) => {
 
 
 app.get('/edit', (req, res) => {
-   console.log("get_edit");
+   console.log("#get_edit");
   if (req.query.bid) {
     const bid = parseInt(req.query.bid);
     const password = req.query.password; // 비밀번호 입력값 가져오기
+    const password1 = req.body.password;
 
+        console.log('입력 비밀번호:', password); // 입력받은 비밀번호 로그로 출력
+        console.log('입력 비밀번호:', password1); // 입력받은 비밀번호 로그로 출력
     nfts.findOne({ id: bid }).then((board) => {
       if (board) {
         console.log('입력 비밀번호:', password); // 입력받은 비밀번호 로그로 출력
+        console.log('입력 비밀번호:', password1); // 입력받은 비밀번호 로그로 출력
         console.log('DB 비밀번호:', board.password); // DB에 저장된 비밀번호 로그로 출력
 
         // 비밀번호 비교
@@ -119,7 +124,7 @@ app.get('/edit', (req, res) => {
 
 // 비밀번호 저장 라우트 핸들러
 app.post('/password', function(req, res) {
-   console.log("post_password");
+   console.log("#post_password");
   console.log('비밀번호');
   const { password } = req.body;
   console.log('사용자가 입력한 비밀번호:', password);
@@ -151,16 +156,30 @@ app.post('/password', function(req, res) {
 //})
 
 app.post('/edit', (req, res) => {
-   console.log("post_edit");
-  console.log("edit post" + req.body.title + req.body.content)
-  if (req.query.bid) {
+   console.log("#post_edit");
+    const bid = parseInt(req.query.bid);
+    const password = req.query.password; // 비밀번호 입력값 가져오기
+    const password1 = req.body.password;
+
+        console.log('_입력 비밀번호:', password); // 입력받은 비밀번호 로그로 출력
+        console.log('_입력 비밀번호:', password1); // 입력받은 비밀번호 로그로 출력
+  console.log("_edit post" + req.body.title + req.body.content)
+  
+if (req.query.bid) {
     const bid = parseInt(req.query.bid);
     const password = req.body.password;
+    const password1 = req.body.password;
 
     // 비밀번호 검증 로직
     nfts.findOne({ id: bid }).then((board) => {
       if (board && board.password === password) {
+
+        console.log('같다', password); // 입력받은 비밀번호 로그로 출력
+
+
+
         // 비밀번호 일치 시 업데이트 로직 실행
+
         nfts.findOneAndUpdate(
           { id: bid },
           {
@@ -178,6 +197,7 @@ app.post('/edit', (req, res) => {
       } else {
         // 비밀번호 불일치 시 오류 처리
         res.send('<script>alert("비밀번호가 일치하지 않습니다."); window.history.back();</script>');
+        console.log('다름', password); // 입력받은 비밀번호 로그로 출력
       }
     });
   }
@@ -188,8 +208,26 @@ app.post('/edit', (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.post('/comment', (req, res) => {
-   console.log("post_delcomm");
+   console.log("#post_delcomm");
         console.log("comment post" + req.query.bid + req.body.comment)
   if ( req.query.bid ) {
           bid = parseInt(req.query.bid)
@@ -201,7 +239,7 @@ app.post('/comment', (req, res) => {
   }
 })
 app.get('/delcomm', (req, res) => {
-   console.log("get_delcomm");
+   console.log("#get_delcomm");
         console.log("delete comment " + req.query.bid + req.query.cid)
   if ( req.query.bid ) {
           bid = parseInt(req.query.bid)
@@ -213,7 +251,7 @@ app.get('/delcomm', (req, res) => {
   }
 })
 app.get('/like', (req, res) => {
-   console.log("get_like add");
+   console.log("#get_like add");
   if ( req.query.bid ) {
           bid = parseInt(req.query.bid)
           console.log("bid" + bid)
@@ -225,19 +263,22 @@ app.get('/like', (req, res) => {
   }
 })
 app.get('/content', (req, res) => {
-   console.log("get_board");
+   console.log("#get_board");
         console.log(req.query)
   if ( req.query.bid ) {
           bid = parseInt(req.query.bid)
         console.log(bid)
      nfts.findOne({id:bid}).then((board) => {
-             console.log("content read good");
-       res.render("nftcontent", {"name":"NFT Content", "board":board})
+            console.log("읽어온 비밀번호:", board.password); // 비밀번호 출력
+      console.log("타이틀:", board.title); // 타이틀 출력       
+
+	console.log("content read good");
+       	res.render("nftcontent", {"name":"NFT Content", "board":board})
      })
   }
 })
 app.post('/board', (req, res) => {
-   console.log("post_board");
+   console.log("#post_board");
    const title = req.body.title
    const content = req.body.content
    const url = req.body.url
@@ -254,12 +295,15 @@ app.post('/board', (req, res) => {
 	 password: password 
   })
    boards.save()
+
                 .then(()=>res.redirect("/lists"))
                 .catch((err)=>res.json(req.body))
+   console.log('DB 타이틀:', boards.title); // 입력받은 비밀번호 로그로 출력
+   console.log('DB 비밀번호:', boards.password); // 입력받은 비밀번호 로그로 출력
 })
 
 app.post('/delete', (req, res) => {
-      console.log('post_delete.');
+      console.log('#post_delete.');
   const { bid, password } = req.body;
 
   // 비밀번호 확인 로직
@@ -289,7 +333,7 @@ app.post('/delete', (req, res) => {
 });
 
 app.get('/delete', (req, res) => {
-      console.log('get_delete.');
+      console.log('#get_delete.');
   const bid = req.query.bid;
   // 삭제 로직 구현
   nfts.findOneAndDelete({ id: bid })
