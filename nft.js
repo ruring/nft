@@ -157,24 +157,19 @@ app.post('/password', function(req, res) {
 
 app.post('/edit', (req, res) => {
    console.log("#post_edit");
-    const bid = parseInt(req.query.bid);
-    const password = req.query.password; // 비밀번호 입력값 가져오기
-    const password1 = req.body.password;
+   const bid = parseInt(req.query.bid);
+   const password = req.body.password;
 
-        console.log('_입력 비밀번호:', password); // 입력받은 비밀번호 로그로 출력
-        console.log('_입력 비밀번호:', password1); // 입력받은 비밀번호 로그로 출력
-  console.log("_edit post" + req.body.title + req.body.content)
+   console.log('_입력 비밀번호:', password); // 입력받은 비밀번호 로그로 출력
+   console.log('_입력 bid:', req.query.bid); // 입력받은 비밀번호 로그로 출력
   
 if (req.query.bid) {
-    const bid = parseInt(req.query.bid);
-    const password = req.body.password;
-    const password1 = req.body.password;
-
     // 비밀번호 검증 로직
-    nfts.findOne({ id: bid }).then((board) => {
+   nfts.findOne({ id: bid }).then((board) => {
+      console.log('_DB 비밀번호:', board.password); // 입력받은 비밀번호 로그로 출력
       if (board && board.password === password) {
 
-        console.log('같다', password); // 입력받은 비밀번호 로그로 출력
+          console.log('같다', password); // 입력받은 비밀번호 로그로 출력
 
 
 
@@ -191,9 +186,12 @@ if (req.query.bid) {
             },
           },
           null
-        ).then(() => {
+        ).then((board) => {
           res.redirect("/content?bid=" + bid);
-        });
+
+     })
+
+        
       } else {
         // 비밀번호 불일치 시 오류 처리
         res.send('<script>alert("비밀번호가 일치하지 않습니다."); window.history.back();</script>');
