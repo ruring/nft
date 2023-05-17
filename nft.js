@@ -28,7 +28,6 @@ const board_schema = new mongoose.Schema({
      likeCount: { type: Number, default: 0 },
      createdAt: { type: Date, default: Date.now },
      comments: { type : Array , "default" : [] }
-    // password: { type: String }
 },{
      versionKey: false
 })
@@ -243,7 +242,7 @@ app.post('/board', (req, res) => {
    const content = req.body.content
    const url = req.body.url
    const imageUrl = req.body.imageUrl
-   const password1 = req.body.password;
+   const password = req.body.password;
    console.log('입력 타이틀:', title); // 입력받은 비밀번호 로그로 출력
    console.log('입력 비밀번호:', password1); // 입력받은 비밀번호 로그로 출력
    const boards = new nfts({
@@ -252,7 +251,7 @@ app.post('/board', (req, res) => {
          url: url,
          imageUrl: imageUrl,
          content: content,
-	 password: password1 
+	 password: password 
   })
    boards.save()
                 .then(()=>res.redirect("/lists"))
