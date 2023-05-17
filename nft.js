@@ -28,6 +28,7 @@ const board_schema = new mongoose.Schema({
      likeCount: { type: Number, default: 0 },
      createdAt: { type: Date, default: Date.now },
      comments: { type : Array , "default" : [] }
+    // password: { type: String }
 },{
      versionKey: false
 })
@@ -50,11 +51,13 @@ app.get('/',function(req, res) {
         res.send("Hi");
 });
 app.get('/data', (req, res) => {
+   console.log("gett_data");
   nfts.find().then((board) => {
     res.json(board)
   })
 })
 app.get('/lists', (req, res) => {
+   console.log("get_lists");
   nfts.find().then((boards) => {
  const filteredBoards = boards.filter((board) => board.title && board.title.trim() !== "");
     res.render("nftlists", { name: "NFT Lists", boards: filteredBoards });
@@ -82,6 +85,7 @@ app.get('/lists', (req, res) => {
 
 
 app.get('/edit', (req, res) => {
+   console.log("get_edit");
   if (req.query.bid) {
     const bid = parseInt(req.query.bid);
     const password = req.query.password; // 비밀번호 입력값 가져오기
@@ -116,6 +120,7 @@ app.get('/edit', (req, res) => {
 
 // 비밀번호 저장 라우트 핸들러
 app.post('/password', function(req, res) {
+   console.log("post_password");
   console.log('비밀번호');
   const { password } = req.body;
   console.log('사용자가 입력한 비밀번호:', password);
@@ -147,6 +152,7 @@ app.post('/password', function(req, res) {
 //})
 
 app.post('/edit', (req, res) => {
+   console.log("post_edit");
   console.log("edit post" + req.body.title + req.body.content)
   if (req.query.bid) {
     const bid = parseInt(req.query.bid);
@@ -184,17 +190,19 @@ app.post('/edit', (req, res) => {
 
 
 app.post('/comment', (req, res) => {
+   console.log("post_delcomm");
         console.log("comment post" + req.query.bid + req.body.comment)
   if ( req.query.bid ) {
           bid = parseInt(req.query.bid)
           console.log("bid" + bid + " cid=" + req.query.cid)
           nfts.findOneAndUpdate({id:bid},{$push:{comments:req.body.comment}},{new:true}).then((board) => {
-          //res.render("content", {"name":"Board Content", "board":board})
+          //res.render("content", {"name":"Board Content", "boardboard":board})
           res.redirect("/content?bid="+bid)
      })
   }
 })
 app.get('/delcomm', (req, res) => {
+   console.log("get_delcomm");
         console.log("delete comment " + req.query.bid + req.query.cid)
   if ( req.query.bid ) {
           bid = parseInt(req.query.bid)
@@ -206,7 +214,7 @@ app.get('/delcomm', (req, res) => {
   }
 })
 app.get('/like', (req, res) => {
-        console.log("like add")
+   console.log("get_like add");
   if ( req.query.bid ) {
           bid = parseInt(req.query.bid)
           console.log("bid" + bid)
@@ -218,6 +226,7 @@ app.get('/like', (req, res) => {
   }
 })
 app.get('/content', (req, res) => {
+   console.log("get_board");
         console.log(req.query)
   if ( req.query.bid ) {
           bid = parseInt(req.query.bid)
@@ -229,19 +238,21 @@ app.get('/content', (req, res) => {
   }
 })
 app.post('/board', (req, res) => {
-   console.log("board");
+   console.log("post_board");
    const title = req.body.title
    const content = req.body.content
    const url = req.body.url
    const imageUrl = req.body.imageUrl
-   const password = req.body.password;
+   const password1 = req.body.password;
+   console.log('입력 타이틀:', title); // 입력받은 비밀번호 로그로 출력
+   console.log('입력 비밀번호:', password1); // 입력받은 비밀번호 로그로 출력
    const boards = new nfts({
          id : ++bid,
          title: title,
          url: url,
          imageUrl: imageUrl,
          content: content,
-	 password: password 
+	 password: password1 
   })
    boards.save()
                 .then(()=>res.redirect("/lists"))
@@ -249,9 +260,9 @@ app.post('/board', (req, res) => {
 })
 
 app.post('/delete', (req, res) => {
+      console.log('post_delete.');
   const { bid, password } = req.body;
 
-      console.log('post/delete.');
   // 비밀번호 확인 로직
   nfts.findOne({ id: bid, password: password })
     .then((board) => {
@@ -279,9 +290,8 @@ app.post('/delete', (req, res) => {
 });
 
 app.get('/delete', (req, res) => {
+      console.log('get_delete.');
   const bid = req.query.bid;
-  
-      console.log('get/delete.');
   // 삭제 로직 구현
   nfts.findOneAndDelete({ id: bid })
     .then(() => {
