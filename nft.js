@@ -244,7 +244,7 @@ app.post('/board', (req, res) => {
    const imageUrl = req.body.imageUrl
    const password = req.body.password;
    console.log('입력 타이틀:', title); // 입력받은 비밀번호 로그로 출력
-   console.log('입력 비밀번호:', password1); // 입력받은 비밀번호 로그로 출력
+   console.log('입력 비밀번호:', password); // 입력받은 비밀번호 로그로 출력
    const boards = new nfts({
          id : ++bid,
          title: title,
