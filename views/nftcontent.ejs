@@ -2,44 +2,56 @@
 <head>
 <style>
 th, td {
-  padding: 5px;
+    padding: 5px;
 }
 </style>
 </head>
 <body>
-    <h1><%=name%></h1>
+    <h1><%= name %></h1>
     <table border="1" style="border-collapse: collapse;">
-    <tr>
-        <th>id</th>
-        <th>Title</th>
-        <th>Site</th>
-        <th>Image</th>
-        <th>Content</th>
-        <th>Like</th>
-    </tr>
-    <tr>
-        <td><%=board.id%></td>
-        <td><%=board.title%></td>
-        <td><a href="<%=board.url%>"><%=board.imageUrl.split('/')[2]%></a></td>
-        <td><img width="100" src="<%=board.imageUrl%>"></td>
-        <td><%=board.content%></td>
-        <td><%=board.likeCount%></td>
-    </tr>
-    <tr>
-        <td colspan="6">댓글</td>
-    </tr>
-    <% board.comments.forEach(function(comment, id){ %>
-    <tr>
-        <td><%=id%></td>
-        <td colspan="4"><%=comment%></td>
-        <td><a href="/delcomm?bid=<%=board.id%>&cid=<%=comment%>">삭제</a></td>
-    </tr>
-    <% }) %>
+        <tr>
+            <th>id</th>
+            <th>Title</th>
+            <th>Site</th>
+            <th>이미지</th>
+            <th>내용</th>
+            <th>좋아요</th>
+        </tr>
+        <tr>
+            <td><%= board.id %></td>
+            <td><%= board.title %></td>
+            <td><a href="<%= board.url %>"><%= board.imageUrl.split('/')[2] %></a></td>
+            <td><img width="100" src="<%= board.imageUrl %>"></td>
+            <td><%= board.content %></td>
+            <td><%= board.likeCount %></td>
+        </tr>
+        <tr>
+            <td colspan="6">댓글</td>
+        </tr>
+        <% board.comments.forEach(function(comment, id) { %>
+            <tr>
+                <td><%= id %></td>
+                <td colspan="4"><%= comment %></td>
+                <td><a href="/delcomm?bid=<%= board.id %>&cid=<%= comment %>">삭제</a></td>
+            </tr>
+        <% }) %>
     </table>
-    <a href="/like?bid=<%=board.id%>">좋아요~</a> |
-    <a href="/edit?bid=<%=board.id%>&password=<%=board.password%>">수정</a> |
+    <a href="/like?bid=<%= board.id %>">좋아요~</a> |
+    <a href="/edit?bid=<%= board.id %>">수정</a> |
     <a href="/lists">목록 전체보기</a>
-    <form method="post" action="/comment?bid=<%=board.id%>&cid=<%=board.comments.length%>">
+    
+    
+<!-- index.html -->
+<form action="/delete" method="POST">
+  <input type="password" name="password" placeholder="비밀번호" required>
+  <input type="hidden" name="bid" value="<%= board.id %>">
+    <a href="/delete?bid=<%= board.id %>">삭제</a>
+  <button type="submit">삭제</button>
+</form>
+   
+
+ 
+    <form method="post" action="/comment?bid=<%= board.id %>&cid=<%= board.comments.length %>">
         <input type="text" name="comment" size="50">
         <input type="submit" value="댓글쓰기">
     </form>
