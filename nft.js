@@ -53,12 +53,41 @@ nfts.findOne({}, {}, { sort: { '_id': -1 } })
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
 const ejs = require('ejs');
-app.set('view engine', 'ejs');
+/*app.set('view engine', 'ejs');
 app.set('views', './views');
+*/app.set('view engine', 'ejs');
+app.set('views', __dirname + '/views');
 
 app.get('/', function (req, res) {
+
+        console.log("/");
   res.send("Hi");
+  nfts.find().then((boards) => {
+    res.render("nftlists", { "name": "NFT Lists", "boards": boards });
+  });
 });
+
+
+app.get('/nftlists', function(req, res) {
+        console.log("/nftlists");
+  // nftlists.ejs 파일 렌더링하여 클라이언트로 전달
+
+  nfts.find().then((boards) => {
+    res.render("nftlists", { "name": "NFT Lists", "boards": boards });
+  });
+});
+
+app.get('/views/nftlists.ejs', function(req, res) {
+        console.log("/views/nftlists");
+  // nftlists.ejs 파일 렌더링하여 클라이언트에게 전달
+
+  nfts.find().then((boards) => {
+    res.render("nftlists", { "name": "NFT Lists", "boards": boards });
+  });
+});
+
+
+
 
 app.get('/data', (req, res) => {
   nfts.find().then((board) => {
